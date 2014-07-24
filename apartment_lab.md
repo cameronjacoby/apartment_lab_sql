@@ -10,7 +10,7 @@ CREATE DATABASE apartment_lab;
 ```
 CREATE TABLE owners(owner_id SERIAL PRIMARY KEY, name VARCHAR(10), age INTEGER);
 
-CREATE TABLE properties(property_id SERIAL PRIMARY KEY, name VARCHAR(10), num_units INTEGER, owner_id INTEGER NOT NULL);
+CREATE TABLE properties(property_id SERIAL PRIMARY KEY, name VARCHAR(20), num_units VARCHAR(10), owner_id INTEGER NOT NULL);
 ```
 - Keep this relationship in mind when designing your schema:
   + **One owner can have many properties**
@@ -70,7 +70,7 @@ SELECT name FROM owners;
 - Show the ages of all of the owners in ascending order:
 
 ```
-SELECT * FROM owners ORDER BY age ASC;
+SELECT age FROM owners ORDER BY age ASC;
 ```
 - Show the name of an owner whose name is Donald:
 
@@ -122,6 +122,9 @@ DELETE FROM owners WHERE name='Janet';
 
 ```
 SELECT * FROM properties WHERE name NOT IN ('Archstone') AND property_id NOT IN (3, 5) ORDER BY name ASC;
+
+// <> syntax also works
+SELECT * FROM properties WHERE name <> 'Archstone' AND property_id <> (3, 5) ORDER BY name ASC;
 ``` 
 - Count the total number of rows in the properties table.
 
@@ -136,7 +139,7 @@ SELECT MAX(age) FROM owners;
 - Show the names of the first three owners in your owners table.
 
 ```
-SELECT name FROM owners LIMIT 3 OFFSET 0;
+SELECT * FROM owners LIMIT 3;
 ```
 - Create a foreign key that references the owner_id in the owners table and forces the constraint ON DELETE NO ACTION. 
 
@@ -146,14 +149,16 @@ ALTER TABLE properties ADD CONSTRAINT owner_fk FOREIGN KEY (owner_id) REFERENCES
 - Show all of the information from the owners table and the properties table in one joined table.
 
 ```
-SELECT * FROM owners JOIN properties ON owners.owner_id=properties.owner_id;
+SELECT owners.name, properties.name FROM owners JOIN properties ON owners.owner_id=properties.owner_id;
 ``` 
 - Bonus (this might require you to look up documentation online)
   + In the properties table change the name of the column "name" to "property_name". 
   + Count the total number of properties where the owner_id is between 1 and 3.
   
 ```
-ALTER TABLE properties RENAME COLUMN name to property_name;
+ALTER TABLE properties RENAME COLUMN "name" to "property_name";
 
-SELECT COUNT(*) FROM properties WHERE owner_id > 0 AND owner_id < 4;
+SELECT COUNT(*) FROM properties WHERE owner_id BETWEEN 1 AND 3;
+// < 4 also works
+SELECT COUNT(*) FROM properties WHERE owner_id < 4;
 ```
